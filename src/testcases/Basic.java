@@ -26,7 +26,7 @@ public class Basic extends Setup{
 		e = driver.findElementById("android:id/checkbox");		
 		e.click();
 		
-		e=  driver.findElementByXPath("(//android.widget.RelativeLayout)[2]");
+		e=  driver.findElement(By.xpath("(//android.widget.RelativeLayout)[2]"));//driver.findElementByXPath("(//android.widget.RelativeLayout)[2]");
 		e.click();
 		
 		e = driver.findElement(By.className("android.widget.EditText"));
