@@ -25,5 +25,9 @@ public class Setup {
 		AndroidDriver<AndroidElement> driver = new AndroidDriver<>(serverURL,cap);
 		return driver;
 	}
+	
+	public static void pritAwesome() {
+		System.out.println("Awesome");
+	}
 
 }

@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="D:/AppiumLearnings/appiumrefresh/referredLibs/selenium-java-3.141.59/libs/okhttp-3.11.0.jar"/>
 	<classpathentry kind="lib" path="D:/AppiumLearnings/appiumrefresh/referredLibs/selenium-java-3.141.59/libs/okio-1.14.0.jar"/>
 	<classpathentry kind="lib" path="D:/AppiumLearnings/appiumrefresh/referredLibs/commons-lang3-3.11.jar"/>
+	<classpathentry kind="lib" path="D:/AppiumLearnings/appiumrefresh/referredLibs/Setup.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
