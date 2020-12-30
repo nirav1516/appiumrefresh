@@ -1,0 +1,183 @@
+package testcases;
+
+//import static java.time.Duration.ofSeconds;
+
+import java.net.MalformedURLException;
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.xml.sax.Locator;
+
+import init.SetupECommerce;
+import io.appium.java_client.MobileBy;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.touch.LongPressOptions;
+
+import static io.appium.java_client.touch.offset.ElementOption.element;
+
+import static io.appium.java_client.touch.TapOptions.tapOptions;
+
+public class Ecommerce_tc5_LongPress extends SetupECommerce{
+	HashSet<String> shoeNames = new HashSet<>();
+	float totalAmount = 0;
+
+	public static void main(String[] args) throws MalformedURLException, InterruptedException {
+		// TODO Auto-generated method stub
+		
+		AndroidDriver<AndroidElement> driver = capabilities();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		
+		AndroidElement ae = driver.findElementById("com.androidsample.generalstore:id/nameField");
+		ae.sendKeys("nirav");
+		driver.hideKeyboard();
+		
+		ae = driver.findElement(By.xpath("//android.widget.RadioButton[@text='Female']"));
+		ae.click();
+		
+		ae = driver.findElement(By.id("com.androidsample.generalstore:id/spinnerCountry"));
+		ae.click();
+		
+		ae = driver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector()).scrollIntoView(text(\"Aruba\"));");
+		//new UiScrollable(new UiSelector()).scrollIntoView(text(\"WebView\"));
+		//driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textMatches(\"" + containedText + "\").instance(0))")); 
+		ae.click();
+		
+		ae = driver.findElementByXPath("//android.widget.Button[@text=\"Let's  Shop\"]");
+		ae.click();
+		
+		String shoesText = "Converse All Star";
+		String secondShoeText = "Air Jordan 4 Retro";
+		Ecommerce_tc5_LongPress ev = new Ecommerce_tc5_LongPress();
+		ev.addToCart(ae,driver,shoesText);
+		System.out.println("Total so far: "+ev.totalAmount);
+		//ev.addToCart(ae,driver,secondShoeText);
+		//System.out.println("Total so far: "+ev.totalAmount);
+		ev.validateItemsInCart(ae, driver);
+		ev.validateTotalAmountInCart(ae, driver);
+		
+		TouchAction ta = new TouchAction(driver);
+		WebElement checkBox = driver.findElement(By.className("android.widget.CheckBox"));
+		
+		ta.tap(tapOptions().withElement(element(checkBox)));
+		ta.perform();
+		//com.androidsample.generalstore:id/termsButton
+		WebElement terms = driver.findElement(By.id("com.androidsample.generalstore:id/termsButton"));
+		
+		ta.longPress(LongPressOptions.longPressOptions().withElement(element(terms)).withDuration(Duration.ofSeconds(2))).release();
+		ta.perform();
+		
+		//com.androidsample.generalstore:id/alertTitle
+		String title ="Terms Of Conditions";
+		ae = driver.findElement(By.id("com.androidsample.generalstore:id/alertTitle"));
+		Assert.assertEquals(title, ae.getText());
+		
+		ae = driver.findElement(By.xpath("//*[@text='CLOSE']"));
+		ae.click();
+		
+		ae = driver.findElement(By.id("com.androidsample.generalstore:id/btnProceed"));
+		ae.click();
+		
+		
+	}
+	
+	public void addToCart(AndroidElement ae,AndroidDriver<AndroidElement> driver,String shoesText) {
+		ae = driver
+                .findElementByAndroidUIAutomator("new UiScrollable(new UiSelector()"
+                + ".resourceId(\"com.androidsample.generalstore:id/rvProductList\")).scrollIntoView("
+                + "new UiSelector().text(\""+ shoesText +"\"));");
+		
+		//Find parent of this shoeText
+		AndroidElement parentElement = driver.findElement(By.xpath("//*[@text='"+ shoesText +"']/parent::android.widget.LinearLayout[1]"));
+		
+		//below commented part is another approch to get parent, first get list and then get the fisrt parent
+		//List<MobileElement> lae = ae.findElements(By.xpath("./parent::*"));
+		
+		//System.out.println("the size: " +lae.size());
+		//ae = lae.get(0);
+		
+		//once parent is found, search within parent to find Add to cart 
+		System.out.println(ae.getAttribute("class"));
+		ae = (AndroidElement) parentElement.findElement(By.xpath("//*[@text='ADD TO CART']"));
+		System.out.println(ae.getAttribute("class"));
+		ae.click();
+		
+		ae = (AndroidElement) parentElement.findElement(By.xpath("//*[@resource-id='com.androidsample.generalstore:id/productPrice']"));
+		String sPrice = ae.getText().substring(1);
+		float fPrice = Float.parseFloat(sPrice);
+		totalAmount+=fPrice;
+		shoeNames.add(shoesText);
+		
+		/*
+		//com.androidsample.generalstore:id/appbar_btn_cart
+		ae = driver.findElementById("com.androidsample.generalstore:id/appbar_btn_cart");
+		ae.click();
+		//Thread.sleep(2000);
+		WebDriverWait wait = new WebDriverWait(driver,10,1000);
+		ae = (AndroidElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.TextView[@text='"+ shoesText +"']") ));
+		//ae = (AndroidElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathExpression))
+		//ae = driver.findElement(By.xpath("//android.widget.TextView[@text='"+ shoesText +"']"));
+		Assert.assertEquals(shoesText, ae.getText());
+		System.out.println(ae.getText());
+		
+		ae = driver.findElement(By.id("com.androidsample.generalstore:id/appbar_btn_back"));
+		ae.click();*/
+	}
+	
+	public void validateItemsInCart(AndroidElement ae, AndroidDriver<AndroidElement> driver) {
+		navigateToCart(ae, driver);
+		
+		//List<AndroidElement> lae = driver.findElementsById("com.androidsample.generalstore:id/productName");
+		//List<WebElement> lae = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id("com.androidsample.generalstore:id/productName")));
+		List<AndroidElement> lae = driver.findElements(By.id("com.androidsample.generalstore:id/productName"));
+		for(int i=0;i<lae.size();i++) {
+			System.out.println(lae.get(i).getText());
+			Assert.assertTrue(shoeNames.contains(lae.get(i).getText()));
+		}
+		
+	}
+	
+	public boolean isElementPresent(AndroidDriver<AndroidElement> driver, By locator) {
+		try {
+			AndroidElement ae = driver.findElement(locator);
+			return true;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
+	}
+	
+	public void navigateToCart(AndroidElement ae, AndroidDriver<AndroidElement> driver) {
+		By cartBy = By.xpath("//android.widget.TextView[@text='Cart']");
+		if(!isElementPresent(driver, cartBy)) {
+			ae = driver.findElementById("com.androidsample.generalstore:id/appbar_btn_cart");
+			ae.click();
+		}
+		WebDriverWait wait = new WebDriverWait(driver,20,1000);
+		
+		//List<AndroidElement> lae = driver.findElementsById("com.androidsample.generalstore:id/productName");
+		ae = (AndroidElement) wait.until(ExpectedConditions.visibilityOfElementLocated(cartBy));
+	}
+	
+	public void validateTotalAmountInCart(AndroidElement ae, AndroidDriver<AndroidElement> driver) {
+		//com.androidsample.generalstore:id/totalAmountLbl
+		navigateToCart(ae, driver);
+		ae = driver.findElement(By.id("com.androidsample.generalstore:id/totalAmountLbl"));
+		String sPrice = ae.getText().substring(2);
+		System.out.println("cartTotal: "+sPrice);
+		float fPrice = Float.parseFloat(sPrice);
+		Assert.assertEquals(fPrice, totalAmount,0.00);
+		
+	}
+
+}
