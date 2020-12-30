@@ -23,7 +23,7 @@ public class Browsebasic extends SetupMobileChrome{
 		we.sendKeys("nirav");
 		Thread.sleep(2000);
 		//we = driver.findElement(By.name("pass"));
-		we = driver.findElementByXPath("//*[@type=\"password\"]");
+		we = driver.findElementByXPath("//*[@type='password']");
 			// driver.findElementByName("pass");
 		we.sendKeys("try");
 		
